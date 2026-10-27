@@ -20,6 +20,9 @@ constraints, and relevant context. Resolve “near me”, “next Friday”, and
 to earlier turns before searching. Kado does not receive the conversation history.
 Do not send credentials or unnecessary personal data.
 
+Kado may use the caller's approximate location for location-dependent questions.
+Agents running on servers should name places explicitly.
+
 For example: “Find vegetarian restaurants near King's Cross, London, open after
 22:00 on 30 October 2026 for four people, under £30 each.”
 
