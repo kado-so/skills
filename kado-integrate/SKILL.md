@@ -32,6 +32,8 @@ export async function searchKado(
   query: string,
   metadata: Record<string, string> = {},
   signal?: AbortSignal,
+  location?: string,
+  ip?: string,
 ): Promise<string> {
   const key = process.env.KADO_API_KEY;
   if (!key) throw new Error("Set KADO_API_KEY on the server.");
@@ -41,7 +43,7 @@ export async function searchKado(
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query, metadata }),
+    body: JSON.stringify({ query, metadata, location, ip }),
     signal: signal ?? null,
   });
   if (!response.ok) {
@@ -126,8 +128,17 @@ search. Check the HTTP status before treating the body as XML. Read
 
 Tell the agent to write self-contained queries: include the actual location,
 calendar dates, goal, constraints, and relevant conversation context. Kado does
-not receive the conversation history. Send only `query` and optional `metadata`.
-There are no other search settings.
+not receive the conversation history. Send `query` and optional `metadata`,
+`location`, and `ip`. There are no other search settings.
+
+When the project's agent serves end users, pass their known `location` (for
+example `"Indiranagar, Bengaluru, India"`) or their request's `ip`. Supply these
+from application context as the fourth and fifth arguments to `searchKado`.
+`location` takes precedence over `ip`, then Kado uses the caller's IP. An
+unusable explicit IP gives no location, without falling back to the caller.
+Places named in the query always win. Location must be 1–200 characters after
+trimming; IP must be IPv4 or IPv6 and is used locally for lookup, never stored.
+Pass only the detail needed for the task; do not add unnecessary personal data.
 
 Pass opaque end-user and session IDs, for example
 `{ user_id: "u_42", session_id: "session_7" }`. Metadata is for your analytics,

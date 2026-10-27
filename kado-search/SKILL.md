@@ -20,13 +20,19 @@ constraints, and relevant context. Resolve “near me”, “next Friday”, and
 to earlier turns before searching. Kado does not receive the conversation history.
 Do not send credentials or unnecessary personal data.
 
-Kado may use the caller's approximate location for location-dependent questions.
-Agents running on servers should name places explicitly.
+Pass `location` when you know where the user is, instead of only writing it into
+the query. Use as much detail as helps, for example `"Indiranagar, Bengaluru,
+India"` (1–200 characters after trimming). When serving an end user's request,
+you can pass their IPv4 or IPv6 `ip` instead; Kado looks it up locally and never
+stores it. `location` takes precedence over `ip`, then the caller's IP. An
+unusable explicit IP gives no location and never falls back to the caller.
+Server-side agents passing neither get no location. Places named in the query
+always win. Send only the location detail needed for the task.
 
 For example: “Find vegetarian restaurants near King's Cross, London, open after
 22:00 on 30 October 2026 for four people, under £30 each.”
 
-Send only `query` and optional `metadata`. The query must be 1–4,000 characters
+Send `query` and optional `metadata`, `location`, and `ip`. The query must be 1–4,000 characters
 after trimming, and the JSON body at most 64 KB. There are no search settings or
 result-count parameters. Metadata is for the application's analytics and does
 not influence results. Use the end-user/session IDs supplied by the application,
